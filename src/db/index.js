@@ -7,7 +7,7 @@ const connecDB = async () => {
         console.log(`\n mongoDB connected DB_Host :: ${connectionInstance.connection.host}`);
     } catch (MongoError) {
         console.log("MONGODB ERROR :: ",MongoError);
-        process.emit(1);
+        process.exit(1);
     }
 }
 export default connecDB;
