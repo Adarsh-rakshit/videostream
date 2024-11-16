@@ -6,7 +6,6 @@ import {ApiResponse} from "../utils/ApiResponse.js"
 
 
 const registerUser = asyncHandler(async (req,res)=>{
-    console.log(req.body);
     const {fullName, username, email, password} = req.body;
     if([fullName,username,email,password].some((field) => field?.trim === "")){
         throw new ApiError(400,"all fields needed");
@@ -19,17 +18,20 @@ const registerUser = asyncHandler(async (req,res)=>{
     }
     //file uploaded by, to multer
     const avatarLocalPath = req.files?.avatar[0]?.path
-    const coverimageLocalPath = req.files?.coverimage[0]?.path
+    let coverimageLocalPath;
+    if(req.files && Array.isArray(req.files.coverimage) && req.files.coverimage.length() == 1){
+        coverimageLocalPath = req.files.coverimage[0].path;
+    }
     
     if(!avatarLocalPath){
-        throw new ApiError(400,"avatar is needed");
+        throw new ApiError(400,"avatar is needed there is no avatar ");
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverimage = await uploadOnCloudinary(coverimageLocalPath);
     
     if(!avatar){
-        throw new ApiError(500,"avatar is needed")
+        throw new ApiError(500,"avatar is needed cant find the on uploadoncloudinary")
     }
 
     //db upload
